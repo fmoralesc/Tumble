@@ -1,0 +1,7 @@
+Tumble for vim
+==============
+
+This script adds to vim the ability to send text entries to the tumblr.com blogging platform. It supports markdown formatting, and detects titles. It can also rewrite old entries.
+
+The original version was based on Travis Jeffery's tumblr.vim (http://www.vim.org/scripts/script.php?script_id=2329).
+
