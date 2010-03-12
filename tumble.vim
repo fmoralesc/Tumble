@@ -1,6 +1,6 @@
 " tumble.vim - Tumble!
 " Maintainer:   Felipe Morales <hel.sheep@gmail.com>
-" Time-stamp: <Sun Feb  21 20:32:00 GMT-4 2009 Felipe Morales>
+" Time-stamp: <Fri Mar  12 15:57:00 GMT-4 2010 Felipe Morales>
 " Based in tumblr.vim by Travis Jeffery
 
 "Exit quickly when:
