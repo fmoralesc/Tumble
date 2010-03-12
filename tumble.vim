@@ -13,7 +13,7 @@ endif
 let g:loaded_tumblr = 1
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
-command! -range=% -nargs=? Tumble exec("py send_post(<f-line1>, <f-line2>, '<args>')")
+command! -range=% -nargs=? Tumble exec('py send_post(<f-line1>, <f-line2>, "<args>")')
 
 python <<EOF
 import vim
