@@ -13,14 +13,14 @@ endif
 let g:loaded_tumblr = 1
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
-command! -nargs=? Tumble exec("py send_post('<args>')")
+command! -range=% -nargs=? Tumble exec("py send_post(<f-line1>, <f-line2>, '<args>')")
 
 python <<EOF
 import vim
 from urllib import *
 import xml.etree.ElementTree
 
-def send_post(state="published"):
+def send_post(rstart, rend, state="published"):
 	tumblr_write = "http://www.tumblr.com/api/write"
 	#these variables must be set for tumble! to work.
 	email = vim.eval("g:tumblr_email")
@@ -30,12 +30,13 @@ def send_post(state="published"):
 	post_info = {"email" : email, "password" : password,  "group" : tumblelog, "state" : state, "type" : "regular", "format" : "markdown"}
 	
 	#if the first buffer line is a setext style h1 title, it grabs it as a title for the post in tumblr.
-	first_line = vim.current.buffer[0]
-	if len(vim.current.buffer) > 1 and vim.current.buffer[1].find("=") > -1:
+	text = vim.current.buffer.range(int(rstart), int(rend))
+	first_line = text[0]
+	if len(text) > 1 and text[1].find("=") > -1:
 			post_info["title"] = first_line
-			post_info["body"] = "\n".join(vim.current.buffer[2:])
+			post_info["body"] = "\n".join(text[2:])
 	else:
-			post_info["body"] = "\n".join(vim.current.buffer[0:])
+			post_info["body"] = "\n".join(text[0:])
 	
 	#if post title is the same as the one from a previous post, it overwrites it.
 	if "title" in post_info:
