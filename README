@@ -14,11 +14,11 @@ the syntax for it is
 	:[range]Tumble [draft|published]
 
 By default, it posts the entire current buffer to tumblr.com, but a range can
-be supplied is that isn't desired. For example, ":,Tumble" would post the
+be supplied if that isn't desired. For example, ":,Tumble" would post the
 current selection.
 
 Unless 'draft' (sans ') is given as an argument, it publishes the post
-inmediately. The default behaviour is equivalent to ":Tumble published". Any
+immediately. The default behaviour is equivalent to ":Tumble published". Any
 other argument could make the posting to fail. tumble.vim doesn't have safety
 measures against that currently.
 
