@@ -1,6 +1,6 @@
 " tumble.vim - Tumble!
 " Maintainer:   Felipe Morales <hel.sheep@gmail.com>
-" Time-stamp: <Fri Mar  12 15:57:00 GMT-4 2010 Felipe Morales>
+" Time-stamp: Mon, 15 Mar 2010 12:18:22 -0300
 " Based in tumblr.vim by Travis Jeffery
 
 "Exit quickly when:
@@ -13,14 +13,14 @@ endif
 let g:loaded_tumblr = 1
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
-command! -range=% -nargs=? Tumble exec('py send_post(<f-line1>, <f-line2>, "<args>")')
+command! -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
 
 python <<EOF
 import vim
 from urllib import *
 import xml.etree.ElementTree
 
-def send_post(rstart, rend, state="published"):
+def tumble_send_post(rstart, rend, state="published"):
 	tumblr_write = "http://www.tumblr.com/api/write"
 	#these variables must be set for tumble! to work.
 	email = vim.eval("g:tumblr_email")
