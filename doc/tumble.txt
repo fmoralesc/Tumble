@@ -11,14 +11,14 @@ tumble.vim adds only one command to Vim:
 
 the syntax for it is
 	
-	:[range]Tumble [draft|published]
+	:[range]Tumble [draft|publish]
 
 By default, it posts the entire current buffer to tumblr.com, but a range can
 be supplied if that isn't desired. For example, ":,Tumble" would post the
 current selection.
 
 Unless 'draft' (sans ') is given as an argument, it publishes the post
-immediately. The default behaviour is equivalent to ":Tumble published". Any
+immediately. The default behaviour is equivalent to ":Tumble publish". Any
 other argument could make the posting to fail. tumble.vim doesn't have safety
 measures against that currently.
 

@@ -1,6 +1,6 @@
 " tumble.vim - Tumble!
 " Maintainer:   Felipe Morales <hel.sheep@gmail.com>
-" Time-stamp: Mon, 15 Mar 2010 12:18:22 -0300
+" Time-stamp: Tue, 30 Mar 2010 18:38:44 -0300
 " Based in tumblr.vim by Travis Jeffery
 
 "Exit quickly when:
@@ -20,15 +20,24 @@ import vim
 from urllib import *
 import xml.etree.ElementTree
 
-def tumble_send_post(rstart, rend, state="published"):
-	tumblr_write = "http://www.tumblr.com/api/write"
+tumblr_write_api = "http://www.tumblr.com/api/write"
+
+def tumble_send_post(rstart, rend, state="publish"):
 	#these variables must be set for tumble! to work.
+	#they are initialized here so we can change them on the fly (useful when we can want to post to several blogs.).
 	email = vim.eval("g:tumblr_email")
 	password = vim.eval("g:tumblr_password")
 	tumblelog = vim.eval("g:tumblr_tumblelog")
 
-	post_info = {"email" : email, "password" : password,  "group" : tumblelog, "state" : state, "type" : "regular", "format" : "markdown"}
+	#load the basic info
+	post_info = {"email" : email, "password" : password,  "group" : tumblelog, "type" : "regular", "format" : "markdown"}
 	
+	#state can be "published" or "draft". we want to make sure it is one of them.
+	if state == "publish":
+			post_info["state"] = "published"
+	else if state == "draft":
+			post_info["state"] = state
+
 	#if the first buffer line is a setext style h1 title, it grabs it as a title for the post in tumblr.
 	text = vim.current.buffer.range(int(rstart), int(rend))
 	first_line = text[0]
@@ -49,5 +58,6 @@ def tumble_send_post(rstart, rend, state="published"):
 	
 	data = urlencode(post_info)
 
-	res = urlopen(tumblr_write, data)
+	try:
+		res = urlopen(tumblr_write_api, data)
 EOF
