@@ -35,7 +35,7 @@ def tumble_send_post(rstart, rend, state="publish"):
 	#state can be "published" or "draft". we want to make sure it is one of them.
 	if state == "publish":
 			post_info["state"] = "published"
-	else if state == "draft":
+	elif state == "draft":
 			post_info["state"] = state
 
 	#if the first buffer line is a setext style h1 title, it grabs it as a title for the post in tumblr.
@@ -60,4 +60,6 @@ def tumble_send_post(rstart, rend, state="publish"):
 
 	try:
 		res = urlopen(tumblr_write_api, data)
+	except:
+		print "tumble.vim: Couldn't post to tumblr.com"
 EOF
