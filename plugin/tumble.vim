@@ -60,6 +60,7 @@ def tumble_send_post(rstart, rend, state="publish"):
 
 	try:
 		res = urlopen(tumblr_write_api, data)
+		print "tumble.vim: Post sent successfully."
 	except:
 		print "tumble.vim: Couldn't post to tumblr.com"
 
@@ -128,7 +129,8 @@ def delete_post(tumblr_last_list):
 
 	try:
 		call = urlopen("http://www.tumblr.com/api/delete", urlencode(post_info))
+		print "tumble.vim: Post deleted."
 	except:
-		print "Couldn't delete the post."
+		print "tumble.vim: Couldn't delete the post."
 	list_tumbles(tumblr_last_list)
 EOF
