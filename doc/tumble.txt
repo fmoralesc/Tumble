@@ -2,14 +2,24 @@ Tumble for vim
 ==============
 
 This script adds to vim the ability to send text entries to the tumblr.com
-blogging platform. It supports markdown formatting, and is able to edit
-previous entries. 
+blogging platform. It supports markdown formatting, and is able to edit and 
+delete previous entries.
 
-tumble.vim adds only one command to Vim: 
+In order to work, the variables
+	
+	tumblr_email
+	tumblr_password
+	tumblr_tumblelog
+
+must be set. They are evaluated on every command, so you can change them on 
+the fly in case you need to switch to another blog.
+
+tumble.vim adds two commands to Vim: 
 	
 	:Tumble
+	:ListTumbles
 
-the syntax for it is
+the syntax for :Tumble is
 	
 	:[range]Tumble [draft|publish]
 
@@ -26,6 +36,14 @@ Whenever it can, tumble.vim tries to be smart. If it finds a first level setext
 style markdown title in the first lines of the buffer or range, it detects it
 as a title. If the title is found to be the same as the one from an earlier
 post, it overwrites it, instead of sending a new post.
+
+The syntax for :ListTumbles is
+
+	:ListTumbles draft|published
+
+It prints a list of your published or drafting posts in the current buffer. If you 
+press <enter> over a post line, tumble.vim will try to fetch the post and load it 
+for editing. If you press <delete>, it will delete the post.
 
 The original version was based on Travis Jeffery's tumblr.vim
 (http://www.vim.org/scripts/script.php?script_id=2329), and the current version
