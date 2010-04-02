@@ -1,7 +1,5 @@
 " tumble.vim - Tumble!
-" Maintainer:   Felipe Morales <hel.sheep@gmail.com>
-" Time-stamp: Tue, 30 Mar 2010 18:38:44 -0300
-" Based in tumblr.vim by Travis Jeffery
+" Felipe Morales <hel.sheep@gmail.com>
 
 "Exit quickly when:
 "- this plugin was already loaded (or disabled)
@@ -14,6 +12,8 @@ let g:loaded_tumblr = 1
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
 command! -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
+" Use ListTumbrDrafts to list your drafts.
+command! -nargs=? ListTumbles exec('py list_tumbles("<args>")')
 
 python <<EOF
 import vim
@@ -62,4 +62,58 @@ def tumble_send_post(rstart, rend, state="publish"):
 		res = urlopen(tumblr_write_api, data)
 	except:
 		print "tumble.vim: Couldn't post to tumblr.com"
+
+def list_tumbles(post_state="published"):
+	email = vim.eval("g:tumblr_email")
+	password = vim.eval("g:tumblr_password")
+	tumblelog = vim.eval("g:tumblr_tumblelog")
+
+	tumblr_last_list = post_state
+
+	vim.command("normal ggdG")
+	vim.command("set filetype=mkd")
+	vim.current.buffer[0] = "#" + tumblelog + " " + post_state
+	vim.current.buffer.append("")
+
+	sec_info = urlencode({"email" : email, "password" : password, "state" : post_state, "num" : "50", "filter" : "none"})
+	data = urlopen("http://" + tumblelog + "/api/read", sec_info)
+	text = data.read()
+	posts = xml.etree.ElementTree.XML(text).find('posts')
+
+	for post in posts.findall('post'):
+		if post.get("type") == "regular":
+				title = post.find("regular-title").text.encode("utf-8")
+				vim.current.buffer.append(post.get("id") + "\t" + title)
+ 	vim.command("set nomodified")
+	vim.command("map <enter> :py edit_post(\"" +  tumblr_last_list + "\")<cr>")
+
+def edit_post(tumblr_last_list):
+	email = vim.eval("g:tumblr_email")
+	password = vim.eval("g:tumblr_password")
+	tumblelog = vim.eval("g:tumblr_tumblelog")
+
+	post_id = vim.current.line.split("\t")[0]
+	post_title = vim.current.line.split("\t")[1]
+	vim.command("set modified")
+	vim.command("normal ggjdG")
+
+	header_tail = ""
+	for count in range(len(post_title)):
+			header_tail = header_tail + "="
+	
+	vim.current.buffer[0] = post_title
+	vim.current.buffer.append(header_tail)
+	vim.current.buffer.append("")
+
+	post_info = { "filter" : "none", "id" : post_id }
+
+	if tumblr_last_list == "draft":
+		post_info["email"] = email
+		post_info["password"] = password
+		post_info["state"] = "draft"
+
+	data = urlopen("http://" + tumblelog + "/api/read", urlencode(post_info))
+	post = xml.etree.ElementTree.XML(data.read()).find('posts').find('post')
+	body = post.find("regular-body").text.encode("utf-8").split("\n")
+	vim.current.buffer.append(body)	
 EOF
