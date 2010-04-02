@@ -86,6 +86,7 @@ def list_tumbles(post_state="published"):
 				vim.current.buffer.append(post.get("id") + "\t" + title)
  	vim.command("set nomodified")
 	vim.command("map <enter> :py edit_post(\"" +  tumblr_last_list + "\")<cr>")
+	vim.command("map <delete> :py delete_post(\"" +  tumblr_last_list + "\")<cr>")
 
 def edit_post(tumblr_last_list):
 	email = vim.eval("g:tumblr_email")
@@ -115,5 +116,19 @@ def edit_post(tumblr_last_list):
 	data = urlopen("http://" + tumblelog + "/api/read", urlencode(post_info))
 	post = xml.etree.ElementTree.XML(data.read()).find('posts').find('post')
 	body = post.find("regular-body").text.encode("utf-8").split("\n")
-	vim.current.buffer.append(body)	
+	vim.current.buffer.append(body)
+
+def delete_post(tumblr_last_list):
+	email = vim.eval("g:tumblr_email")
+	password = vim.eval("g:tumblr_password")
+
+	post_id = vim.current.line.split("\t")[0]
+
+	post_info = { "email" : email, "password" : password, "post-id" : post_id }
+
+	try:
+		call = urlopen("http://www.tumblr.com/api/delete", urlencode(post_info))
+	except:
+		print "Couldn't delete the post."
+	list_tumbles(tumblr_last_list)
 EOF
