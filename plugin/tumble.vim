@@ -8,7 +8,7 @@ if (exists("g:loaded_tumblr") && g:loaded_tumblr) || &cp
     finish
 endif
 
-let g:loaded_tumblr = 1
+let g:loaded_tumblr = 0
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
 command! -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
@@ -49,20 +49,29 @@ def tumble_send_post(rstart, rend, state="publish"):
 	
 	#if post title is the same as the one from a previous post, it overwrites it.
 	if "title" in post_info:
-			tumble_read = urlopen("http://"+ tumblelog + "/api/read")
+			try:
+				tumble_read = urlopen("http://"+ tumblelog + "/api/read")
+			except:
+				print "tumble.vim: couldn't receive posts data."
+
 			posts = xml.etree.ElementTree.XML(tumble_read.read()).find('posts')
 
 			for post in posts.findall('post'):
-				if post.get("type") == "regular" and post.find("regular-title").text.find(post_info["title"]) > -1:
-						post_info["post-id"] = post.get("id")
+				if post.get("type") == "regular":
+					titledata = post.find("regular-title")
+					if titledata != None:
+						if titledata.text.find(post_info["title"]) > -1:
+							post_info["post-id"] = post.get("id")
 	
 	data = urlencode(post_info)
 
 	try:
 		res = urlopen(tumblr_write_api, data)
 		print "tumble.vim: Post sent successfully."
+		return True
 	except:
 		print "tumble.vim: Couldn't post to tumblr.com"
+		return False
 
 def list_tumbles(post_state="published"):
 	email = vim.eval("g:tumblr_email")
