@@ -54,14 +54,15 @@ def tumble_send_post(rstart, rend, state="publish"):
 			except:
 				print "tumble.vim: couldn't receive posts data."
 
-			posts = xml.etree.ElementTree.XML(tumble_read.read()).find('posts')
+			if tumble_read:
+				posts = xml.etree.ElementTree.XML(tumble_read.read()).find('posts')
 
-			for post in posts.findall('post'):
-				if post.get("type") == "regular":
-					titledata = post.find("regular-title")
-					if titledata != None:
-						if titledata.text.find(post_info["title"]) > -1:
-							post_info["post-id"] = post.get("id")
+				for post in posts.findall('post'):
+					if post.get("type") == "regular":
+						titledata = post.find("regular-title")
+						if titledata != None:
+							if titledata.text.find(post_info["title"]) > -1:
+								post_info["post-id"] = post.get("id")
 	
 	data = urlencode(post_info)
 
