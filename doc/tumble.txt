@@ -14,12 +14,13 @@ In order to work, the variables
 must be set. They are evaluated on every command, so you can change them on 
 the fly in case you need to switch to another blog.
 
-tumble.vim adds two commands to Vim: 
+tumble.vim adds three commands to Vim: 
 	
 	:Tumble
+	:TumbleLink
 	:ListTumbles
 
-the syntax for :Tumble is
+The syntax for :Tumble is
 	
 	:[range]Tumble [draft|publish]
 
@@ -36,6 +37,19 @@ Whenever it can, tumble.vim tries to be smart. If it finds a first level setext
 style markdown title in the first lines of the buffer or range, it detects it
 as a title. If the title is found to be the same as the one from an earlier
 post, it overwrites it, instead of sending a new post.
+
+The syntax for :TumbleLink is
+
+	:[range]TumbleLink
+
+It assumes the [range] is formatted thus:
+
+	line
+	1		URL
+	2		NAME
+	3...	DESCRIPTION
+
+NAME and DESCRIPTION are optional, but NAME should always be on line 2 (so if you don't want to give a name to the link, you should keep this line blank).
 
 The syntax for :ListTumbles is
 
