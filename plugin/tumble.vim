@@ -12,6 +12,8 @@ let g:loaded_tumblr = 0
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
 command! -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
+" Use TumbleLink to post a link to tumblr.com
+command! -range=% -nargs=? TumbleLink exec('py tumble_send_link(<f-line1>, <f-line2>)')
 " Use ListTumbrDrafts to list your drafts.
 command! -nargs=? ListTumbles exec('py list_tumbles("<args>")')
 
@@ -21,6 +23,31 @@ from urllib import *
 import xml.etree.ElementTree
 
 tumblr_write_api = "http://www.tumblr.com/api/write"
+
+def tumble_send_link(rstart, rend):
+	email = vim.eval("g:tumblr_email")
+	password = vim.eval("g:tumblr_password")
+	tumblelog = vim.eval("g:tumblr_tumblelog")
+	post_info = {"email" : email, "password" : password,  "group" : tumblelog, "type" : "link"}
+
+	text = vim.current.buffer.range(int(rstart), int(rend))
+	post_info["url"] = text[0]
+	print post_info["url"]
+	if len(text) > 1:
+		post_info["name"] = text[1]
+		print 
+		if len(text) > 2:
+			post_info["description"] = "\n".join(text[2:])
+
+	data = urlencode(post_info)
+	
+	try:
+		res = urlopen(tumblr_write_api, data)
+		print "tumble.vim: Link sent successfully."
+		return True
+	except:
+		print "tumble.vim: Couldn't post link to tumblr.com"
+		return False
 
 def tumble_send_post(rstart, rend, state="publish"):
 	#these variables must be set for tumble! to work.
