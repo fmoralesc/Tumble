@@ -11,11 +11,18 @@ endif
 let g:loaded_tumblr = 0
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
-command! -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
+command! -complete=customlist,TumbleCompleteArgs -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
 " Use TumbleLink to post a link to tumblr.com
 command! -range=% -nargs=? TumbleLink exec('py tumble_send_link(<f-line1>, <f-line2>)')
 " Use ListTumbrDrafts to list your drafts.
-command! -nargs=? ListTumbles exec('py list_tumbles("<args>")')
+command! -complete=customlist,TumbleCompleteArgs -nargs=? ListTumbles exec('py list_tumbles("<args>")')
+
+fun! TumbleCompleteArgs(A, L, P)
+	if match(a:L, "list")
+		return split("publish draft")
+	else
+		return split("published draft")
+endfun
 
 python <<EOF
 import vim
