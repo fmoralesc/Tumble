@@ -108,21 +108,31 @@ def list_tumbles(post_state="published"):
 
 	tumblr_last_list = post_state
 
+	sec_info = urlencode({"email" : email, "password" : password, "state" : post_state, "num" : "50", "filter" : "none"})
+	try:
+		data = urlopen("http://" + tumblelog + "/api/read", sec_info)
+	except:
+		print "tumble.vim: couldn't retrieve previous posts"
+		return False
+	
 	vim.command("normal ggdG")
 	vim.command("set filetype=mkd")
 	vim.current.buffer[0] = "#" + tumblelog + " " + post_state
 	vim.current.buffer.append("")
-
-	sec_info = urlencode({"email" : email, "password" : password, "state" : post_state, "num" : "50", "filter" : "none"})
-	data = urlopen("http://" + tumblelog + "/api/read", sec_info)
+	
 	text = data.read()
 	posts = xml.etree.ElementTree.XML(text).find('posts')
 
 	for post in posts.findall('post'):
 		if post.get("type") == "regular":
+			postdata = post.find("regular-title")
+			if postdata != None:
 				title = post.find("regular-title").text.encode("utf-8")
-				vim.current.buffer.append(post.get("id") + "\t" + title)
- 	vim.command("set nomodified")
+			else:
+				title = "No title"
+			vim.current.buffer.append(post.get("id") + "\t" + title)
+
+	vim.command("set nomodified")
 	vim.command("map <enter> :py edit_post(\"" +  tumblr_last_list + "\")<cr>")
 	vim.command("map <delete> :py delete_post(\"" +  tumblr_last_list + "\")<cr>")
 
