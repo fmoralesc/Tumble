@@ -8,7 +8,7 @@ if (exists("g:loaded_tumblr") && g:loaded_tumblr) || &cp
     finish
 endif
 
-let g:loaded_tumblr = 0
+let g:loaded_tumblr = 1
 
 " Use Tumble to post the contents of the current buffer to tumblr.com
 command! -complete=customlist,TumbleCompleteArgs -range=% -nargs=? Tumble exec('py tumble_send_post(<f-line1>, <f-line2>, "<args>")')
@@ -31,11 +31,19 @@ import xml.etree.ElementTree
 
 tumblr_write_api = "http://www.tumblr.com/api/write"
 
+def tumblr_return_proxy():
+    # handle proxies somewhat gracefully
+    if vim.eval('exists("g:tumblr_http_proxy")') == "1":
+	return {"http" : vim.eval("g:tumblr_http_proxy")}
+    else:
+	return {}
+
 def tumble_send_link(rstart, rend):
 	email = vim.eval("g:tumblr_email")
 	password = vim.eval("g:tumblr_password")
 	tumblelog = vim.eval("g:tumblr_tumblelog")
-	post_info = {"email" : email, "password" : password,  "group" : tumblelog, "type" : "link"}
+	post_info = {"email" : email, "password" : password, "group" : tumblelog, "type" : "link"}
+	proxy = tumblr_return_proxy()
 
 	text = vim.current.buffer.range(int(rstart), int(rend))
 	post_info["url"] = text[0]
@@ -49,7 +57,7 @@ def tumble_send_link(rstart, rend):
 	data = urlencode(post_info)
 	
 	try:
-		res = urlopen(tumblr_write_api, data)
+		res = urlopen(tumblr_write_api, data, proxies=proxy)
 		print "tumble.vim: Link sent successfully."
 		return True
 	except:
@@ -62,6 +70,7 @@ def tumble_send_post(rstart, rend, state="publish"):
 	email = vim.eval("g:tumblr_email")
 	password = vim.eval("g:tumblr_password")
 	tumblelog = vim.eval("g:tumblr_tumblelog")
+	proxy = tumblr_return_proxy()
 
 	#load the basic info
 	post_info = {"email" : email, "password" : password,  "group" : tumblelog, "type" : "regular", "format" : "markdown"}
@@ -84,7 +93,7 @@ def tumble_send_post(rstart, rend, state="publish"):
 	#if post title is the same as the one from a previous post, it overwrites it.
 	if "title" in post_info:
 			try:
-				tumble_read = urlopen("http://"+ tumblelog + "/api/read")
+				tumble_read = urlopen("http://"+ tumblelog + "/api/read", proxies=proxy)
 			except:
 				print "tumble.vim: couldn't receive posts data."
 
@@ -101,7 +110,9 @@ def tumble_send_post(rstart, rend, state="publish"):
 	data = urlencode(post_info)
 
 	try:
-		res = urlopen(tumblr_write_api, data)
+	    # if vim.
+		res = urlopen(tumblr_write_api, data, proxies=proxy)
+		print(res.read())
 		print "tumble.vim: Post sent successfully."
 		return True
 	except:
@@ -112,12 +123,13 @@ def list_tumbles(post_state="published"):
 	email = vim.eval("g:tumblr_email")
 	password = vim.eval("g:tumblr_password")
 	tumblelog = vim.eval("g:tumblr_tumblelog")
+	proxy = tumblr_return_proxy()
 
 	tumblr_last_list = post_state
 
 	sec_info = urlencode({"email" : email, "password" : password, "state" : post_state, "num" : "50", "filter" : "none"})
 	try:
-		data = urlopen("http://" + tumblelog + "/api/read", sec_info)
+		data = urlopen("http://" + tumblelog + "/api/read", sec_info, proxies=proxy)
 	except:
 		print "tumble.vim: couldn't retrieve previous posts"
 		return False
@@ -147,6 +159,7 @@ def edit_post(tumblr_last_list):
 	email = vim.eval("g:tumblr_email")
 	password = vim.eval("g:tumblr_password")
 	tumblelog = vim.eval("g:tumblr_tumblelog")
+	proxy = tumblr_return_proxy()
 
 	post_id = vim.current.line.split("\t")[0]
 	post_title = vim.current.line.split("\t")[1]
@@ -168,7 +181,7 @@ def edit_post(tumblr_last_list):
 		post_info["password"] = password
 		post_info["state"] = "draft"
 
-	data = urlopen("http://" + tumblelog + "/api/read", urlencode(post_info))
+	data = urlopen("http://" + tumblelog + "/api/read", urlencode(post_info), proxies=proxy)
 	post = xml.etree.ElementTree.XML(data.read()).find('posts').find('post')
 	body = post.find("regular-body").text.encode("utf-8").split("\n")
 	vim.current.buffer.append(body)
@@ -176,13 +189,14 @@ def edit_post(tumblr_last_list):
 def delete_post(tumblr_last_list):
 	email = vim.eval("g:tumblr_email")
 	password = vim.eval("g:tumblr_password")
+	global proxy
 
 	post_id = vim.current.line.split("\t")[0]
 
 	post_info = { "email" : email, "password" : password, "post-id" : post_id }
 
 	try:
-		call = urlopen("http://www.tumblr.com/api/delete", urlencode(post_info))
+		call = urlopen("http://www.tumblr.com/api/delete", urlencode(post_info), proxies=proxy)
 		print "tumble.vim: Post deleted."
 	except:
 		print "tumble.vim: Couldn't delete the post."
