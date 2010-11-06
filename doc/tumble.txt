@@ -14,6 +14,10 @@ In order to work, the variables
 must be set. They are evaluated on every command, so you can change them on 
 the fly in case you need to switch to another blog.
 
+If you use a proxy, you must also set
+
+	tumblr_http_proxy
+
 tumble.vim adds three commands to Vim: 
 	
 	:Tumble
@@ -49,7 +53,8 @@ It assumes the [range] is formatted thus:
 	2		NAME
 	3...	DESCRIPTION
 
-NAME and DESCRIPTION are optional, but NAME should always be on line 2 (so if you don't want to give a name to the link, you should keep this line blank).
+NAME and DESCRIPTION are optional, but NAME should always be on line 2 (so if
+you don't want to give a name to the link, you should keep this line blank).
 
 The syntax for :ListTumbles is
 
