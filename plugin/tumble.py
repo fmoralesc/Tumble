@@ -18,12 +18,12 @@ class Tumble(object):
 		self.site = vim.eval("g:tumblr_tumblelog")
 
 	def set_user(self, email, password):
-		vim.command("let g:tumblr_email = \"" + email + "\"")
-		vim.command("let g:tumblr_password = \"" + password + "\"")
+		vim.command("let g:tumblr_email = \"" + self.email + "\"")
+		vim.command("let g:tumblr_password = \"" + self.password + "\"")
 		self._eval_vars()
 
 	def set_site(self, site):
-		vim.command("let g:tumblr_tumblelog = \"" + password + "\"")
+		vim.command("let g:tumblr_tumblelog = \"" + self.site + "\"")
 		self._eval_vars()
 	
 	def send_post(self, range_start, range_end, type="regular", state="published"):

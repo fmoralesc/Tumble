@@ -22,18 +22,18 @@ tumble.vim adds three commands to Vim:
 	
 	:Tumble
 	:TumbleLink
-	:ListTumbles
+	:TumblesList
 
 The syntax for :Tumble is
 	
-	:[range]Tumble [draft|publish]
+	:[range]Tumble [draft|published]
 
 By default, it posts the entire current buffer to tumblr.com, but a range can
 be supplied if that isn't desired. For example, ":,Tumble" would post the
 current selection.
 
 Unless 'draft' (sans ') is given as an argument, it publishes the post
-immediately. The default behaviour is equivalent to ":Tumble publish". Any
+immediately. The default behaviour is equivalent to ":Tumble published". Any
 other argument could make the posting to fail. tumble.vim doesn't have safety
 measures against that currently.
 
@@ -58,7 +58,7 @@ you don't want to give a name to the link, you should keep this line blank).
 
 The syntax for :ListTumbles is
 
-	:ListTumbles draft|published
+	:TumblesList draft|published
 
 It prints a list of your published or drafting posts in the current buffer. If you 
 press <enter> over a post line, tumble.vim will try to fetch the post and load it 
