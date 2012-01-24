@@ -10,7 +10,20 @@ endif
 
 let g:loaded_tumblr = 1
 
-" We create a python object, tumple_plugin
+if !exists("g:tumblr_email")
+	let g:tumblr_email = ""
+endif
+if !exists("g:tumblr_password")
+	let g:tumblr_password = ""
+endif
+if !exists("g:tumblr_tumblelog")
+	let g:tumblr_tumblelog = ""
+endif
+if !exists("g:tumblr_http_proxy")
+	let g:tumblr_http_proxy = ""
+endif
+
+" We create a python object, tumble_plugin
 pyfile <sfile>:p:h/tumble.py
 
 " Use Tumble to post the contents of the current buffer to tumblr.com

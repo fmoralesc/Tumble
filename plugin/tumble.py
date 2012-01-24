@@ -38,9 +38,9 @@ class Tumble(object):
 		
 		if type == "regular":
 			first_line = text[0]
-			if len(text) > 1 and text[1].find("=") > -1:
+			if len(text) > 1 and text[0][0] == "#":
 					post_info["title"] = first_line
-					post_info["body"] = "\n".join(text[2:])
+					post_info["body"] = "\n".join(text[1:])
 			else:
 					post_info["body"] = "\n".join(text[0:])
 			
