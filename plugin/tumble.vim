@@ -19,9 +19,6 @@ endif
 if !exists("g:tumblr_tumblelog")
 	let g:tumblr_tumblelog = ""
 endif
-if !exists("g:tumblr_http_proxy")
-	let g:tumblr_http_proxy = ""
-endif
 
 " We create a python object, tumble_plugin
 pyfile <sfile>:p:h/tumble.py

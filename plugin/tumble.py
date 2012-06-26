@@ -10,7 +10,7 @@ class Tumble(object):
 		if vim.eval('exists("g:tumblr_http_proxy")') == "1":
 			return {"http": vim.eval("g:tumblr_http_proxy")}
 		else:
-			return {}
+			return None
 	
 	def _eval_vars(self):
 		self.user = vim.eval("g:tumblr_email")
